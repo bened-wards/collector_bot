@@ -1,0 +1,8 @@
+*build*
+.vscode*
+venv*
+*__pycache__*
+*pics*
+*/images*
+models/*.onnx
+models/*.pt

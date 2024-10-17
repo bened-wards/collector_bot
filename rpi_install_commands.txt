@@ -1,0 +1,17 @@
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install git tmux htop vim python3-pip libgl-dev net-tools python3-gpiozero
+
+
+sudo apt-get install -y cmake gpiod libgpiod-dev
+
+
+ADD TO /boot/firmware/config.txt towards the top of the file:
+# enable PWM
+dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4
+
+
+
+Enabling UART:
+https://www.electronicwings.com/raspberry-pi/raspberry-pi-uart-communication-using-python-and-c
+- had to turn off echo using `stty -F /dev/ttyS0 -echo` as well

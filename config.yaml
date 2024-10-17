@@ -1,0 +1,128 @@
+# SCCOP AND DUMP ARGUMENTS
+arena: 2
+search_direction: "CCW" # TODO: set this based on arena?
+starting_state: [0.0, 0.0, 0.0] # (x, y, theta) in metres and radians
+log_level: "DEBUG"
+MAX_BALLS_IN_STORAGE: 5 # TODO: change this back
+# this time limit is checked when searching for new balls -> could find a new ball just before this limit, pick it up, then return to box
+return_to_box_time_limit: 530 # seconds - based on 600 second limit + 120 seconds to return to box.
+full_time_limit: 600 # seconds
+is_sunny: False
+reset_theta_angle_deg: -115 # degrees
+
+## YOLO models
+ball_model_path: "models/tennisball3_yolov8n_640.onnx"
+ball_confidence_thresh: 0.8
+ball_iou_thresh: 0.5
+# tennis ball: [0.067, 0.067, 0.067]
+# competition tennis ball: [0.0625, 0.0625, 0.0625]
+ball_dimensions: [0.062, 0.062, 0.062] # (width, depth, height)
+ball_distance_thresh: 4.0 # metres - distance beyond which to ignore detections
+
+box_model_path: "models/box6_yolov8n.onnx"
+box_confidence_thresh: 0.8
+box_iou_thresh: 0.5
+
+# 1.55m -> 33000
+# 1.2m -> 60000
+# 1.0m -> 87000
+# 0.8m -> 130000 / 115000 small
+# 0.6m -> 215000 / 200000 / 189000
+box_area_threshold: 0.36 # just under 115000 for a 640x480 image
+
+## ARENA
+
+arena_dimensions: [5.48, 4.11] # [length, width] in metres. length is from net to baseline, width is from sideline to sideline
+# arena_dimensions: [4.00, 3.00]
+#arena_dimensions: [5.23, 2.9]
+box_dimensions: [0.45, 0.6] # [length, width] in metres. length is from net to baseline, width is from sideline to sideline
+box_height: 0.16
+view_box_offsets: [1.5, 0.9]
+# view_box_offset: 1.2 # metres - distance from box that we want to stop at to try find the box with camera
+
+## MAPPING
+ball_merge_threshold: 0.4 # metres - distance at which to merge two balls into one
+ball_memory_threshold: 3.5 # metres - distance at which to not drive to a ball in memory
+map_distance_travelled_threshold: 3.8 # metres - distance beyond which we remove balls from map
+map_distance_balls_close_no_remove: 0.75 # metres
+
+## CAMERA
+camera_index: -1
+camera_calibration_file_path: "camera_calib/calibration.json"
+# TODO: fix these based on camera positioning
+camera_height: 0.25 # metres
+camera_pivot_length: 0.07 # metres
+# FROM ROBOT FRAME
+# 15 DEG HORIZONTAL -> 40 DEG SERVO -> FRONT OF BALL 0.54M
+# 40 DEG HORIZONTAL -> 13 DEG SERVO -> FRONT OF BALL 0.25M
+# 50 DEG HORIZONTAL -> 3 DEG SERVO -> FRONT OF BALL 0.19M
+# 60 DEG HORIZONTAL -> -10 DEG SERVO -> FRONT OF BALL 0.11M
+# 70 DEG HORIZONTAL -> -20 DEG SERVO -> FRONT OF BALL 0.06M
+camera_angles_horizontal: [15, 30, 40, 50, 60, 70] # degrees
+# degrees for the servo (differ based on mounting)
+camera_servo_angles: [-24, -41, -51, -61, -74, -84] #[40, 13, 3, -10, -20] # degrees
+camera_thresholds: [0.54, 0.4, 0.25, 0.19, 0.11, 0.08] # metres - distances at which balls go out of frame
+camera_ball_close_to_threshold: 0.03 # metres - consider ball close to threshold at threshold - this value
+camera_servo_gpio_pin: 12
+
+## LASER SENSOR
+# TODO: tune this based on fingers
+laser_sensor_ball_threshold: 0.065 # metres - distance at which to actuate arm below
+# TODO: tune this based on turning radius
+laser_sensor_box_far_threshold: 0.76 # metres - the distance from which we are happy to drive to box based on purely laser sensor
+laser_sensor_box_near_threshold: 0.28 # metres - distance at which to perform turn to dump balls
+box_reverse_time: 0.4 # metres - distance to reverse before dumping balls
+box_jerk_distance: 0.01 # metres - distance to jerk forward after reversing
+laser_sensor_timing_budget: 100 # milliseconds - 20, 33, 50, 100, 200, 500 are the options.
+laser_sensor_sweep_threshold: 0.5 # cm - distance between shortest measurement to get back to
+
+## SCOOPER
+arm_servo_gpio_pin: 13
+arm_up_angle: -69 # degrees
+arm_down_angle: 88 # degrees
+claw_servo_gpio_pin: 16
+claw_open_angle: 0 # degrees
+claw_close_angle: -85 # degrees
+
+## REAR DOOR
+rear_door_servo_gpio_pin: 26
+rear_door_open_angle: -56 # degrees
+rear_door_close_angle: 70 # degrees
+
+## TRAVERSING
+ball_traverse_threshold: 0.1 # metres - distance limit for traversing to find ball on map compared to odometry
+CAMERA_DISTANCE_THRESHOLD: 0.5 # metres - distance at which to start using odometry/laser sensor
+CENTRE_THRESHOLD_DEG: 4 # degrees - angle at which we are happy that ball is in centre of frame
+CENTRE_THRESHOLD_DEG_BOX: 15 # degrees - angle at which tennis ball is
+
+SHORT_SLEEP_TIME: 0.1
+SLEEP_TIME: 0.25
+SEARCH_SLEEP_TIME: 1.8
+BOX_APPROACH_SLEEP_TIME: 1.25
+
+WAYPOINT_DISTANCE_THRESH: 0.03 # 3cm
+WAYPOINT_ANGLE_THRESH_DEGREES: 3 # degrees
+
+ROTATION_SPEED_SEARCH: 0.35
+ROTATION_SPEED_APPROACH: 0.25
+FORWARD_SPEED_TRAVERSE: 0.25
+FORWARD_SPEED_APPROACH: 0.075
+
+MAX_DRIFT_CORRECTION_TIME: 6 # seconds - maximum time to drive blindly without correcting for drift
+
+# CENTRE_THRESHOLD: 60
+# CENTRE_THRESHOLD_PROP: 0.1
+# CAM_TO_BALL_AREA_THRESH: 120000 # pixels squared
+# CAM_TO_BALL_AREA_PROP: 0.29 #275% of image
+# DISTANCE_TO_BALL_AT_AREA_THRESH: 0.20 # 20cm
+
+# CORNER_BACK_DISTANCE: -0.1
+
+# # CORNER DETECTION
+# corner_sensitivity: 70 # sensitivity for thresholding image
+# corner_lighting_technique: "HSL" # valid is "HSL" or "HSV"
+# corner_votes_threshold: 200 # number of votes for hough lines -> higher = more confidence in detected lines but less likely to detect
+# corner_lines_iters: 5 # number of images to fit lines to and find intersections for
+# corner_intersections_iters: 5 # number of frames to attempt finding a corner before failing
+
+# home_technique: "try then odometry" # "odometry", "reverse", "try then odometry"

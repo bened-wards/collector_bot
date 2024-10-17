@@ -1,0 +1,3 @@
+[submodule "motor_control"]
+	path = motor_control
+	url = https://github.com/bened-wards/motor_control.git
